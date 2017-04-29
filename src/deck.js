@@ -39,7 +39,18 @@ class Deck extends Component {
 
       // callback when the user releases (let go)
       onPanResponderRelease: (event, gesture) => {
-        this.resetPosition();
+        // swipe to the right
+        if (gesture.dx > SWIPE_THRESHOLD) {
+
+
+        }
+        // swipe to the left
+        else if(gesture.dx < -SWIPE_THRESHOLD) {
+
+        }
+        else {
+          this.resetPosition();
+        }
       }
     });
     // weird but we assigns the panResponder to state
