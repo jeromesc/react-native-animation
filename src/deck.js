@@ -11,6 +11,7 @@ import {
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 0.25 * Dimensions.get('window').width;
+const SWIPE_OUT_DURATION = 250;
 
 class Deck extends Component {
   constructor(props) {
@@ -41,8 +42,7 @@ class Deck extends Component {
       onPanResponderRelease: (event, gesture) => {
         // swipe to the right
         if (gesture.dx > SWIPE_THRESHOLD) {
-
-
+          this.forceSwipeRight();
         }
         // swipe to the left
         else if(gesture.dx < -SWIPE_THRESHOLD) {
@@ -59,6 +59,14 @@ class Deck extends Component {
 
   }
 
+  forceSwipeRight() {
+    // linear animation with timing
+    Animated.timing(this.state.position, {
+      toValue: {x:SCREEN_WIDTH, y:0},
+      duration: SWIPE_OUT_DURATION
+    }).start();
+  }
+
   resetPosition() {
     Animated.spring(this.state.position,
       {
@@ -73,7 +81,7 @@ class Deck extends Component {
     const rotate = position.x.interpolate({
       // associate the inputRange to the outputRange scale
       //inputRange: [-500, 0, 500], // careful with pixels!
-      inputRange: [-SCREEN_WIDTH * 2, 0, SCREEN_WIDTH * 2],
+      inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5],
       outputRange: ['-120deg', '0deg', '120deg']
       // relates -500 pixels to -120 degrees
       // linearly to 500 pixel to 120 degrees
