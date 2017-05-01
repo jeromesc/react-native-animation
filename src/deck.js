@@ -14,6 +14,13 @@ const SWIPE_THRESHOLD = 0.25 * Dimensions.get('window').width;
 const SWIPE_OUT_DURATION = 250;
 
 class Deck extends Component {
+
+  // automatically assigns defaultProps
+  static defaultProps = {
+    onSwipeRight: () => {}, // use as default if the function is not passed in props
+    onSwipeLeft: () => {}
+  };
+
   constructor(props) {
     super(props);
 
@@ -42,11 +49,11 @@ class Deck extends Component {
       onPanResponderRelease: (event, gesture) => {
         // swipe to the right
         if (gesture.dx > SWIPE_THRESHOLD) {
-          this.forceSwipeRight();
+          this.forceSwipe('right');
         }
         // swipe to the left
         else if(gesture.dx < -SWIPE_THRESHOLD) {
-
+          this.forceSwipe('left');
         }
         else {
           this.resetPosition();
@@ -55,16 +62,31 @@ class Deck extends Component {
     });
     // weird but we assigns the panResponder to state
     // and not updated it, same thing for position
-    this.state = { panResponder, position }; // same as {position: position}
+    this.state = { panResponder, position, index: 0 }; // same as {position: position}
 
   }
 
-  forceSwipeRight() {
+  forceSwipe(direction) {
+    const factor = (direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH);
     // linear animation with timing
     Animated.timing(this.state.position, {
-      toValue: {x:SCREEN_WIDTH, y:0},
+      toValue: {x:factor, y:0},
       duration: SWIPE_OUT_DURATION
-    }).start();
+    }).start( () => {
+      // on animation completion
+      this.onSwipeComplete(direction);
+    });
+  }
+
+  onSwipeComplete(direction) {
+    const {onSwipeLeft, onSwipeRight, data} = this.props;
+    const item = data[this.state.index];
+
+    direction === 'right' ? onSwipeRight(item) : onSwipeLeft(item);
+    // mutating the value of position (?) weird..
+    this.state.position.setValue( {x:0, y:0} );
+    // careful: we modify the value by recreating one in the state
+    this.setState({index: this.state.index + 1});
   }
 
   resetPosition() {
