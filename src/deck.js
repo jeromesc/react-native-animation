@@ -148,9 +148,13 @@ class Deck extends Component {
           );
         }
         return (
-          <View key={item.id} style={styles.cardStyle}>
+          // wrapping a Animated.View inside a View
+          // causes the card animation to flash
+          // images are reloaded each time!
+          // We change to Animated.View to stop the flashing
+          <Animated.View key={item.id} style={styles.cardStyle}>
             { this.props.renderCard(item) }
-          </View>
+          </Animated.View>
         );
         // the reverse method is helpful to put the first card
         // on top of the stack (with position absolute conflicting)
