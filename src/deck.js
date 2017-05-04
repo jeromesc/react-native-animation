@@ -140,14 +140,21 @@ class Deck extends Component {
               // attach handler
               {...this.state.panResponder.panHandlers}
               // move it and rotate it (linear relation with x coordinate)
-              style={this.getCardStyle()}
+              // array of styles
+              style={[this.getCardStyle(), styles.cardStyle]}
             >
               {this.props.renderCard(item)}
             </Animated.View>
           );
         }
-        return this.props.renderCard(item);
-      });
+        return (
+          <View key={item.id} style={styles.cardStyle}>
+            { this.props.renderCard(item) }
+          </View>
+        );
+        // the reverse method is helpful to put the first card
+        // on top of the stack (with position absolute conflicting)
+      }).reverse();
     }
   }
   render() {
@@ -159,5 +166,14 @@ class Deck extends Component {
     );
   }
 }
+
+const styles = {
+  cardStyle: {
+    // all cards are stacked (last card on top! not what we want)
+    position: 'absolute',
+    // left: 0, right: 0 : properties conflicting with animations
+    width: SCREEN_WIDTH
+  }
+};
 
 export default Deck;
