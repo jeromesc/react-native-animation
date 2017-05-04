@@ -39,13 +39,24 @@ class App extends React.Component {
       </Card>
     );
   }
+  // When there is no more card to render
+  renderNoMoreCards() {
+    return (
+      <Card title="All done">
+        <Text style={{marginBottom:10}}>
+          No more content!
+        </Text>
+        <Button backgroundColor="#03A9F4" title="Get More!"></Button>
+      </Card>
+    );
+  }
   render() {
     return (
       <View style={styles.container}>
         <Deck
           data={DATA}
           renderCard={this.renderCard}
-
+          renderNoMoreCards={this.renderNoMoreCards}
         />
       </View>
     );

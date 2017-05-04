@@ -118,23 +118,37 @@ class Deck extends Component {
   }
 
   renderCards() {
-    return this.props.data.map( (item, index) => {
-      // only first card
-      if (index === 0) {
-        return (
-          <Animated.View
-            key={item.id}
-            // ... : spreading properties to the view
-            {...this.state.panResponder.panHandlers}
-            // move it and rotate it (linear relation with x coordinate)
-            style={this.getCardStyle()}
-          >
-            {this.props.renderCard(item)}
-          </Animated.View>
-        );
-      }
-      return this.props.renderCard(item);
-    });
+
+    // we there is no more cards to render
+    if (this.state.index == this.props.data.length ) {
+      return this.props.renderNoMoreCards()
+    } else {
+      return this.props.data.map( (item, i) => {
+        // state.index is the current card
+        // i is the current index of the collection
+        if (i < this.state.index) {
+          return null;
+        }
+        // if the current state.index (current displayed card)
+        // is the current index in the collection than we should
+        // render it.
+        if (i === this.state.index) {
+          return (
+            <Animated.View
+              key={item.id}
+              // ... : spreading properties to the view
+              // attach handler
+              {...this.state.panResponder.panHandlers}
+              // move it and rotate it (linear relation with x coordinate)
+              style={this.getCardStyle()}
+            >
+              {this.props.renderCard(item)}
+            </Animated.View>
+          );
+        }
+        return this.props.renderCard(item);
+      });
+    }
   }
   render() {
     return (
