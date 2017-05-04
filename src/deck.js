@@ -152,7 +152,11 @@ class Deck extends Component {
           // causes the card animation to flash
           // images are reloaded each time!
           // We change to Animated.View to stop the flashing
-          <Animated.View key={item.id} style={styles.cardStyle}>
+          <Animated.View
+            key={item.id}
+            // we're cascading the cards
+            style={ [styles.cardStyle, {top: 10 * (i - this.state.index) } ] }
+          >
             { this.props.renderCard(item) }
           </Animated.View>
         );
