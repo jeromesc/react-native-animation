@@ -6,6 +6,8 @@ import {
     View,
     Animated,
     Dimensions,
+    LayoutAnimation,
+    UIManager,
     PanResponder // responds to What are we touching, what component, how is gesture changing?
   } from 'react-native';
 
@@ -27,6 +29,7 @@ class Deck extends Component {
     // gets updated whenever we get the gesture
     const position = new Animated.ValueXY();
 
+    // Respond to swiping gesture
     const panResponder = PanResponder.create({
 
       // occurs anytime the user taps on the screen
@@ -65,6 +68,31 @@ class Deck extends Component {
     this.state = { panResponder, position, index: 0 }; // same as {position: position}
 
   }
+
+  // called whenever the component is called
+  // with a new set of props.
+  // In our case, this will be called when there
+  // is a new collection of cards to load.
+  componentWillReceiveProps(nextProps) {
+    // if it's a new data
+    // reference comparaison not element-wise
+    if (nextProps.data !== this.props.data) {
+      // resetting the current index of card shown
+      this.setState({index: 0});
+    }
+  }
+
+  // Function that gets called each time the component
+  // gets rendered
+  componentWillUpdate() {
+    // Android-compatible code
+    UIManager.setLayoutAnimationEnabledExperimental &&
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    // Animate any change made to that component
+    // in our case, we want to animate the card cascade transition
+    LayoutAnimation.spring();
+  }
+
 
   forceSwipe(direction) {
     const factor = (direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH);
